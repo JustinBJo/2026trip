@@ -74,6 +74,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .progress-count strong { color: var(--green); font-size: 16px; }
 .progress-track { height: 4px; margin: 24px 0 0; background: #3a403b; }
 .progress-fill { display: block; width: 40%; height: 100%; background: var(--green); }
+.progress-fill-60 { width: 60%; }
 .timeline { margin: 0; padding: 0; list-style: none; }
 .timeline-item { position: relative; min-height: 78px; padding: 19px 0 17px; display: grid; grid-template-columns: 35px 1fr; gap: 17px; }
 .timeline-item:not(:last-child)::after { position: absolute; top: 50px; bottom: -1px; left: 16px; width: 1px; background: #414842; content: ''; }
