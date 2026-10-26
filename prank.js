@@ -4,7 +4,7 @@ prankDialog.id = 'prank-dialog';
 prankDialog.setAttribute('aria-labelledby', 'prank-title');
 prankDialog.innerHTML = `
   <section class="prank-view" id="prank-alert-view">
-    <h2 id="prank-title" style="color:red;">!!당신의 기기는 감염되었습니다!!</h2>
+    <h2 id="prank-title" tabindex="-1" style="color:red;">!!당신의 기기는 감염되었습니다!!</h2>
     <img class="prank-photo" src="assets/YH.jpg" alt="김영훈 바이러스 사진">
     <p class="prank-intro">감염된 바이러스 목록:</p>
     <ul class="virus-list">
@@ -27,7 +27,7 @@ prankConfirmDialog.className = 'prank-dialog prank-confirm-dialog';
 prankConfirmDialog.setAttribute('aria-labelledby', 'prank-confirm-title');
 prankConfirmDialog.innerHTML = `
   <section class="prank-view prank-confirm-view">
-    <h2 id="prank-confirm-title">정말 무시하시겠습니까?</h2>
+    <h2 id="prank-confirm-title" tabindex="-1">정말 무시하시겠습니까?</h2>
     <p class="prank-confirm-copy">이 경고를 무시하고 계속하시겠습니까?</p>
     <div class="prank-actions is-split">
       <button class="prank-action" id="prank-no" type="button">아니오</button>
@@ -39,16 +39,22 @@ document.body.append(prankConfirmDialog);
 
 const prankRedirectUrl = 'https://www.ing.nl/payreq/m/ZjT1Nqkv9AbuhatjR1aVuqls4iV4wFEN';
 
+function showDialogAtTop(dialog, heading) {
+  dialog.showModal();
+  dialog.querySelector(heading).focus({ preventScroll: true });
+  dialog.scrollTop = 0;
+}
+
 for (const trigger of document.querySelectorAll('[data-prank-trigger]')) {
   trigger.addEventListener('click', (event) => {
     event.preventDefault();
-    if (!prankDialog.open) prankDialog.showModal();
+    if (!prankDialog.open) showDialogAtTop(prankDialog, '#prank-title');
   });
 }
 
 prankDialog.querySelector('#prank-dismiss').addEventListener('click', () => {
   prankDialog.close();
-  prankConfirmDialog.showModal();
+  showDialogAtTop(prankConfirmDialog, '#prank-confirm-title');
 });
 prankConfirmDialog.querySelector('#prank-no').addEventListener('click', () => prankConfirmDialog.close());
 prankConfirmDialog.querySelector('#prank-yes').addEventListener('click', () => {
