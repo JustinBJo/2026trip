@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171b19">
+    <title>연말여행</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="recommendations.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="연말여행 홈">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span>연말여행</span>
+      </a>
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a class="nav-link" href="index.html">여행 계획</a>
+        <a class="nav-link" href="expenses.html">지출 정산</a>
+        <a class="nav-link is-active" href="recommendations.html">컨텐츠 추천</a>
+        <a class="nav-link" href="notes.html">메모</a>
+      </nav>
+    </header>
+
+    <main class="page-shell notes-shell">
+      <a class="back-link" href="index.html">← 작전 현황</a>
+      <section class="expense-hero">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> CREW NOTES</p>
+        <h1>기타<br><span>메모</span></h1>
+        <p>준비물, 약속, 아이디어 등 공유용</p>
+      </section>
+
+      <p class="connection-status" id="connection-status" role="status" aria-live="polite"></p>
+
+      <section class="notes-layout">
+        <form class="expense-form notes-form" id="note-form">
+          <div class="form-heading">
+            <p class="eyebrow">NEW NOTE</p>
+            <h2>메모 추가</h2>
+          </div>
+          <label class="form-field">
+            <span>제목</span>
+            <input id="note-title" type="text" maxlength="100" placeholder="예: 챙길 것, 만날 시간" required>
+          </label>
+          <label class="form-field">
+            <span>내용</span>
+            <textarea id="note-content" maxlength="10000" rows="7" placeholder="내용을 자유롭게 적어주세요." required></textarea>
+          </label>
+          <button class="button button-primary" type="submit">메모 저장 <span aria-hidden="true">＋</span></button>
+          <p class="form-note">공개 사이트입니다. 방문자는 누구나 메모를 읽고 수정할 수 있습니다.</p>
+        </form>
+
+        <section class="notes-list-panel" aria-labelledby="notes-title">
+          <div class="list-heading">
+            <div>
+              <p class="eyebrow">SHARED NOTES</p>
+              <h2 id="notes-title">메모 목록 <span class="item-count" id="note-count">0</span></h2>
+            </div>
+          </div>
+          <p class="list-feedback" id="note-feedback" aria-live="polite"></p>
+          <div class="notes-list" id="notes-list"></div>
+          <div class="empty-state" id="notes-empty">
+            <span class="empty-icon" aria-hidden="true">＋</span>
+            <strong>저장된 메모가 없습니다.</strong>
+            <span>첫 메모를 추가해 보세요.</span>
+          </div>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>CREW NOTES <span aria-hidden="true">/</span> CREW OF 9</span>
+        <a href="recommendations.html">콘텐츠 추천 보기 →</a>
+      </footer>
+    </main>
+  </body>
+</html>

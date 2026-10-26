@@ -32,10 +32,19 @@ create table if not exists public.trip_recommendation_votes (
   primary key (recommendation_id, voter_id)
 );
 
+create table if not exists public.trip_notes (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (char_length(title) between 1 and 100),
+  content text not null check (char_length(content) between 1 and 10000),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 alter table public.trip_settings enable row level security;
 alter table public.trip_expenses enable row level security;
 alter table public.trip_recommendations enable row level security;
 alter table public.trip_recommendation_votes enable row level security;
+alter table public.trip_notes enable row level security;
 
 grant usage on schema public to anon;
 
@@ -72,8 +81,9 @@ create policy "Anyone can remove trip expenses"
 
 grant select, update on public.trip_settings to anon;
 grant select, insert, delete on public.trip_expenses to anon;
-grant select, insert on public.trip_recommendations to anon;
+grant select, insert, delete on public.trip_recommendations to anon;
 grant select, insert, update on public.trip_recommendation_votes to anon;
+grant select, insert, update, delete on public.trip_notes to anon;
 
 drop policy if exists "Anyone can read trip recommendations" on public.trip_recommendations;
 create policy "Anyone can read trip recommendations"
@@ -86,6 +96,12 @@ create policy "Anyone can add trip recommendations"
   on public.trip_recommendations for insert
   to anon
   with check (true);
+
+drop policy if exists "Anyone can remove trip recommendations" on public.trip_recommendations;
+create policy "Anyone can remove trip recommendations"
+  on public.trip_recommendations for delete
+  to anon
+  using (true);
 
 drop policy if exists "Anyone can read recommendation votes" on public.trip_recommendation_votes;
 create policy "Anyone can read recommendation votes"
@@ -105,6 +121,31 @@ create policy "Anyone can change recommendation votes"
   to anon
   using (true)
   with check (true);
+
+drop policy if exists "Anyone can read trip notes" on public.trip_notes;
+create policy "Anyone can read trip notes"
+  on public.trip_notes for select
+  to anon
+  using (true);
+
+drop policy if exists "Anyone can add trip notes" on public.trip_notes;
+create policy "Anyone can add trip notes"
+  on public.trip_notes for insert
+  to anon
+  with check (true);
+
+drop policy if exists "Anyone can edit trip notes" on public.trip_notes;
+create policy "Anyone can edit trip notes"
+  on public.trip_notes for update
+  to anon
+  using (true)
+  with check (true);
+
+drop policy if exists "Anyone can delete trip notes" on public.trip_notes;
+create policy "Anyone can delete trip notes"
+  on public.trip_notes for delete
+  to anon
+  using (true);
 
 do $$
 begin
@@ -133,6 +174,14 @@ $$;
 do $$
 begin
   alter publication supabase_realtime add table public.trip_recommendation_votes;
+exception
+  when duplicate_object then null;
+end
+$$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.trip_notes;
 exception
   when duplicate_object then null;
 end

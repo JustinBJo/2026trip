@@ -91,7 +91,17 @@ function renderRecommendations() {
       actions.append(button);
     }
 
-    card.append(copy, actions);
+    const controls = document.createElement('div');
+    controls.className = 'recommendation-controls';
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'recommendation-delete-button';
+    deleteButton.type = 'button';
+    deleteButton.textContent = '삭제';
+    deleteButton.setAttribute('aria-label', `${recommendation.title} 추천 삭제`);
+    deleteButton.addEventListener('click', () => removeRecommendation(recommendation, deleteButton));
+    controls.append(actions, deleteButton);
+
+    card.append(copy, controls);
     recommendationList.append(card);
   }
 }
@@ -138,6 +148,33 @@ async function submitVote(recommendationId, vote, actions) {
     recommendationFeedback.textContent = `투표를 저장하지 못했어요: ${error.message}`;
     console.error('Could not save recommendation vote.', error);
     for (const button of actions.querySelectorAll('button')) button.disabled = false;
+    return;
+  }
+
+  await loadRecommendations();
+}
+
+async function removeRecommendation(recommendation, button) {
+  if (!window.confirm(`“${recommendation.title}” 추천을 삭제할까요? 투표도 함께 삭제됩니다.`)) return;
+
+  button.disabled = true;
+  recommendationFeedback.textContent = '추천 삭제 중...';
+  const { data, error } = await database.client
+    .from('trip_recommendations')
+    .delete()
+    .eq('id', recommendation.id)
+    .select('id');
+
+  if (error) {
+    recommendationFeedback.textContent = `추천을 삭제하지 못했어요: ${error.message}`;
+    console.error('Could not delete recommendation.', error);
+    button.disabled = false;
+    return;
+  }
+
+  if (!data?.length) {
+    recommendationFeedback.textContent = '추천이 삭제되지 않았어요. DB 삭제 권한을 확인하세요.';
+    button.disabled = false;
     return;
   }
 
