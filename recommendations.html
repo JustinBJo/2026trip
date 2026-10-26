@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171b19">
+    <title>연말여행</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="recommendations.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="연말여행 홈">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span>연말여행</span>
+      </a>
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a class="nav-link" href="index.html">여행 계획</a>
+        <a class="nav-link" href="expenses.html">지출 정산</a>
+        <a class="nav-link is-active" href="recommendations.html">컨텐츠 추천</a>
+      </nav>
+    </header>
+
+    <main class="page-shell recommendation-shell">
+      <a class="back-link" href="index.html">← 여행 계획으로</a>
+      <section class="expense-hero">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> CREW PICKS</p>
+        <h1>ㅎㅁ<br><span>ㅎ</span></h1>
+        <p>컨텐츠 추천하고 개추/비추 받기</p>
+      </section>
+
+      <p class="connection-status" id="connection-status" role="status" aria-live="polite"></p>
+
+      <section class="recommendation-layout">
+        <form class="expense-form recommendation-form" id="recommendation-form">
+          <div class="form-heading">
+            <p class="eyebrow">ADD YOUR PICK</p>
+            <h2>추천 등록</h2>
+          </div>
+          <label class="form-field">
+            <span>제목</span>
+            <input id="recommendation-title" type="text" maxlength="80" placeholder="예: 보드게임, 맛집, 영화" required>
+          </label>
+          <label class="form-field">
+            <span>짧은 설명</span>
+            <textarea id="recommendation-description" maxlength="240" rows="4" placeholder="왜 추천하는지 간단히 적어주세요." required></textarea>
+          </label>
+          <button class="button button-primary" type="submit">추천 올리기 <span aria-hidden="true">＋</span></button>
+          <p class="form-note">등록된 추천은 모든 여행 멤버에게 공개됩니다.</p>
+        </form>
+
+        <section class="recommendation-list-panel" aria-labelledby="recommendations-title">
+          <div class="list-heading">
+            <div>
+              <p class="eyebrow">THE SHORTLIST</p>
+              <h2 id="recommendations-title">추천 리스트 <span class="item-count" id="recommendation-count">0</span></h2>
+            </div>
+          </div>
+          <p class="list-feedback" id="recommendation-feedback" aria-live="polite"></p>
+          <div class="recommendation-list" id="recommendation-list"></div>
+          <div class="empty-state" id="recommendation-empty">
+            <span class="empty-icon" aria-hidden="true">＋</span>
+            <strong>아직 추천이 없어요.</strong>
+            <span>첫 추천을 올려보세요.</span>
+          </div>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>CREW PICKS <span aria-hidden="true">/</span> CREW OF 9</span>
+        <a href="expenses.html">송금 정리 확인 →</a>
+      </footer>
+    </main>
+  </body>
+</html>

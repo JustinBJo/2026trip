@@ -4,16 +4,18 @@ const emptyState = document.querySelector('#empty-state');
 const totalAmount = document.querySelector('#total-amount');
 const perPersonAmount = document.querySelector('#per-person-amount');
 const expenseCount = document.querySelector('#expense-count');
-const participantCount = document.querySelector('#participant-count');
 const listFeedback = document.querySelector('#list-feedback');
 const connectionStatus = document.querySelector('#connection-status');
+const settlementTotal = document.querySelector('#settlement-total');
+const settlementPeople = document.querySelector('#settlement-people');
+const settlementWarning = document.querySelector('#settlement-warning');
 const database = window.tripDatabase;
+const crew = ['법기', '영훈', '진구', '선형', '강욱', '정우', '재형', '정준', '준원'];
 let expenses = [];
 
 function setConnectionError(message) {
   connectionStatus.textContent = message;
   expenseForm.querySelector('button[type="submit"]').disabled = true;
-  participantCount.disabled = true;
 }
 
 function formatAmount(amount) {
@@ -33,11 +35,10 @@ function formatDate(value) {
 
 function renderExpenses() {
   const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const participantTotal = Number(participantCount.value);
+  const eligibleExpenses = expenses.filter((expense) => crew.includes(expense.payer));
+  const eligibleTotal = eligibleExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   totalAmount.textContent = formatAmount(total);
-  perPersonAmount.textContent = Number.isInteger(participantTotal) && participantTotal > 0
-    ? formatAmount(total / participantTotal)
-    : '—';
+  perPersonAmount.textContent = formatAmount(eligibleTotal / crew.length);
   expenseCount.textContent = String(expenses.length);
   emptyState.hidden = expenses.length > 0;
   expenseList.replaceChildren();
@@ -52,7 +53,7 @@ function renderExpenses() {
     description.textContent = expense.description;
     const meta = document.createElement('div');
     meta.className = 'expense-meta';
-    meta.textContent = `${expense.payer} · ${formatDate(expense.created_at)}`;
+    meta.textContent = `${expense.payer}${crew.includes(expense.payer) ? '' : ' · 결제자 확인 필요'} · ${formatDate(expense.created_at)}`;
     detail.append(description, meta);
 
     const amount = document.createElement('span');
@@ -68,6 +69,117 @@ function renderExpenses() {
 
     item.append(detail, amount, removeButton);
     expenseList.append(item);
+  }
+
+  renderSettlements(eligibleExpenses);
+}
+
+function renderSettlements(eligibleExpenses) {
+  const unknownPayerCount = expenses.length - eligibleExpenses.length;
+  settlementWarning.hidden = unknownPayerCount === 0;
+  settlementWarning.textContent = unknownPayerCount
+    ? `결제자가 9명 명단과 일치하지 않는 지출 ${unknownPayerCount}건은 정산 계산에서 제외했습니다. 해당 지출을 삭제하고 명단에서 결제자를 다시 선택해 등록하세요.`
+    : '';
+
+  const paidByPerson = new Map(crew.map((name) => [name, 0]));
+  const shareByPerson = new Map(crew.map((name) => [name, 0]));
+  let remainderStart = 0;
+  let eligibleTotalCents = 0;
+
+  for (const expense of eligibleExpenses) {
+    const cents = Math.round(expense.amount * 100);
+    eligibleTotalCents += cents;
+    paidByPerson.set(expense.payer, paidByPerson.get(expense.payer) + cents);
+    const baseShare = Math.floor(cents / crew.length);
+    const remainder = cents % crew.length;
+
+    for (let index = 0; index < crew.length; index += 1) {
+      const receivesExtraCent = (index - remainderStart + crew.length) % crew.length < remainder;
+      shareByPerson.set(
+        crew[index],
+        shareByPerson.get(crew[index]) + baseShare + (receivesExtraCent ? 1 : 0)
+      );
+    }
+
+    remainderStart = (remainderStart + remainder) % crew.length;
+  }
+
+  settlementTotal.textContent = `${formatAmount(eligibleTotalCents / 100)} · 계산 가능 지출`;
+
+  const balances = crew.map((name, index) => ({
+    name,
+    order: index,
+    cents: paidByPerson.get(name) - shareByPerson.get(name),
+    transfers: []
+  }));
+  const debtors = balances
+    .filter((person) => person.cents < 0)
+    .map((person) => ({ ...person, remaining: -person.cents }))
+    .sort((left, right) => right.remaining - left.remaining || left.order - right.order);
+  const creditors = balances
+    .filter((person) => person.cents > 0)
+    .map((person) => ({ ...person, remaining: person.cents }))
+    .sort((left, right) => right.remaining - left.remaining || left.order - right.order);
+
+  let debtorIndex = 0;
+  let creditorIndex = 0;
+  while (debtorIndex < debtors.length && creditorIndex < creditors.length) {
+    const debtor = debtors[debtorIndex];
+    const creditor = creditors[creditorIndex];
+    const cents = Math.min(debtor.remaining, creditor.remaining);
+    debtor.transfers.push({ direction: 'pay', counterparty: creditor.name, cents });
+    creditor.transfers.push({ direction: 'receive', counterparty: debtor.name, cents });
+    debtor.remaining -= cents;
+    creditor.remaining -= cents;
+    if (debtor.remaining === 0) debtorIndex += 1;
+    if (creditor.remaining === 0) creditorIndex += 1;
+  }
+
+  settlementPeople.replaceChildren();
+  for (const person of balances) {
+    const detail = document.createElement('details');
+    detail.className = 'settlement-person';
+
+    const summary = document.createElement('summary');
+    summary.className = 'settlement-person-summary';
+    const name = document.createElement('strong');
+    name.className = 'settlement-person-name';
+    name.textContent = person.name;
+    const net = document.createElement('span');
+    net.className = `settlement-net${person.cents < 0 ? ' is-owing' : person.cents > 0 ? ' is-owed' : ''}`;
+    net.textContent = person.cents < 0
+      ? `내기 ${formatAmount(-person.cents / 100)}`
+      : person.cents > 0
+        ? `받기 ${formatAmount(person.cents / 100)}`
+        : '정산 없음';
+    summary.append(name, net);
+
+    const transferList = document.createElement('ul');
+    transferList.className = 'settlement-transfer-list';
+    if (person.transfers.length === 0) {
+      const emptyTransfer = document.createElement('li');
+      emptyTransfer.className = 'settlement-no-transfer';
+      emptyTransfer.textContent = person.cents === 0
+        ? '주고받을 금액이 없습니다.'
+        : '송금 내역을 만들지 못했습니다. 지출 기록을 확인해 주세요.';
+      transferList.append(emptyTransfer);
+    } else {
+      for (const transfer of person.transfers) {
+        const row = document.createElement('li');
+        row.className = 'settlement-transfer';
+        const action = document.createElement('span');
+        action.textContent = transfer.direction === 'pay'
+          ? `${transfer.counterparty}에게 보내기`
+          : `${transfer.counterparty}에게 받기`;
+        const amount = document.createElement('strong');
+        amount.textContent = formatAmount(transfer.cents / 100);
+        row.append(action, amount);
+        transferList.append(row);
+      }
+    }
+
+    detail.append(summary, transferList);
+    settlementPeople.append(detail);
   }
 }
 
@@ -86,28 +198,6 @@ async function loadExpenses() {
   expenses = data.map((expense) => ({ ...expense, amount: Number(expense.amount) }));
   listFeedback.textContent = '';
   renderExpenses();
-}
-
-async function saveParticipants() {
-  const count = Number(participantCount.value);
-  if (!Number.isInteger(count) || count < 1) {
-    listFeedback.textContent = '정산 인원은 1명 이상으로 입력해 주세요.';
-    return;
-  }
-
-  listFeedback.textContent = '정산 인원 저장 중...';
-  const { error } = await database.client
-    .from('trip_settings')
-    .update({ participant_count: count, updated_at: new Date().toISOString() })
-    .eq('id', true);
-
-  if (error) {
-    listFeedback.textContent = `정산 인원을 저장하지 못했어요: ${error.message}`;
-    console.error('Could not save shared participant count.', error);
-    return;
-  }
-
-  listFeedback.textContent = '';
 }
 
 async function removeExpense(id) {
@@ -133,17 +223,6 @@ async function initializeExpenses() {
 
   connectionStatus.textContent = '공유 DB 연결 중...';
   try {
-    const { data: settings, error: settingsError } = await database.client
-      .from('trip_settings')
-      .select('participant_count')
-      .eq('id', true)
-      .maybeSingle();
-
-    if (settingsError) throw settingsError;
-    if (!settings) throw new Error('trip_settings 기본 행이 없습니다. supabase-setup.sql을 실행하세요.');
-
-    participantCount.value = String(settings.participant_count);
-    participantCount.disabled = false;
     expenseForm.querySelector('button[type="submit"]').disabled = false;
     await loadExpenses();
     connectionStatus.textContent = '공개 DB 연결됨 · 사이트 방문자는 누구나 지출을 읽고 수정할 수 있습니다.';
@@ -155,17 +234,6 @@ async function initializeExpenses() {
         schema: 'public',
         table: 'trip_expenses'
       }, loadExpenses)
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'trip_settings',
-        filter: 'id=eq.true'
-      }, (payload) => {
-        if (document.activeElement !== participantCount) {
-          participantCount.value = String(payload.new.participant_count);
-          renderExpenses();
-        }
-      })
       .subscribe((status) => {
         if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
           connectionStatus.textContent = '실시간 연결 실패 · 새로고침 후 다시 시도하세요.';
@@ -177,11 +245,7 @@ async function initializeExpenses() {
   }
 }
 
-participantCount.disabled = true;
 expenseForm.querySelector('button[type="submit"]').disabled = true;
-
-participantCount.addEventListener('change', saveParticipants);
-participantCount.addEventListener('input', renderExpenses);
 
 expenseForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -208,6 +272,7 @@ expenseForm.addEventListener('submit', async (event) => {
     return;
   }
 
+  listFeedback.textContent = '';
   expenseForm.reset();
   submitButton.disabled = false;
   descriptionInput.focus();
