@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171b19">
+    <title>연말여행</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="연말여행 홈">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span>메인</span>
+      </a>
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a class="nav-link is-active" href="index.html">여행 계획</a>
+        <a class="nav-link" href="expenses.html">지출 정산</a>
+      </nav>
+    </header>
+
+    <main class="page-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span> CREW TRIP · DEC 2026</p>
+          <h1>여행 계획<br><span>떠먹여주기</span></h1>
+          <p class="hero-description">일정 관리 및 지출 정산</p>
+        </div>
+        <div class="trip-stamp" aria-label="여행 날짜 2026년 12월 4일부터 6일까지">
+          <span class="stamp-label">OPERATION DATE</span>
+          <strong>12.04 <span>—</span> 12.06</strong>
+          <span class="stamp-year">FRI — SUN · 2026</span>
+        </div>
+        <span class="hero-sparkle sparkle-one" aria-hidden="true">✳</span>
+        <span class="hero-sparkle sparkle-two" aria-hidden="true">09</span>
+      </section>
+
+      <section class="progress-section" aria-labelledby="progress-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Progress</p>
+            <h2 id="progress-title">진행 상황</h2>
+          </div>
+          <span class="progress-count"><strong>2</strong> / 5 완료</span>
+        </div>
+        <div class="progress-track" role="img" aria-label="5단계 중 2단계 완료">
+          <span class="progress-fill"></span>
+        </div>
+        <ol class="timeline">
+          <li class="timeline-item is-done">
+            <span class="step-marker" aria-hidden="true">✓</span>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h3>날짜 정하기</h3>
+                <span class="status status-done">완료</span>
+              </div>
+              <p>12월 4일 금요일부터 12월 6일 일요일까지</p>
+            </div>
+          </li>
+          <li class="timeline-item is-done">
+            <span class="step-marker" aria-hidden="true">✓</span>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h3>숙소 정하기</h3>
+                <span class="status status-done">완료</span>
+              </div>
+              <p>9명이 함께 머물 숙소 확정</p>
+              <a class="inline-link" href="https://www.airbnb.com/rooms/44287389?adults=9&amp;check_in=2026-12-04&amp;check_out=2026-12-06&amp;search_mode=regular_search&amp;photo_id=1039458220&amp;source_impression_id=p3_b831fc10-4b97-48ec-88d1-d1cba113a68f_b0d533e8-d313-4630-b4ee-ebcb6c2b463e_0_44287389_0&amp;previous_page_section_name=1000&amp;federated_search_id=b831fc10-4b97-48ec-88d1-d1cba113a68f&amp;guests=9" target="_blank" rel="noopener noreferrer">숙소 확인하기 <span aria-hidden="true">↗</span></a>
+            </div>
+          </li>
+          <li class="timeline-item is-current">
+            <span class="step-marker" aria-hidden="true">03</span>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h3>예약 및 정산하기</h3>
+                <span class="status status-current">진행 중</span>
+              </div>
+              <p>현재 인당 <strong>168.67</strong> · payment request는 추후 추가 예정</p>
+            </div>
+          </li>
+          <li class="timeline-item is-upcoming">
+            <span class="step-marker" aria-hidden="true">04</span>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h3>여행 당일</h3>
+                <span class="status status-upcoming">예정</span>
+              </div>
+              <p>XX데이</p>
+            </div>
+          </li>
+          <li class="timeline-item is-upcoming">
+            <span class="step-marker" aria-hidden="true">05</span>
+            <div class="step-content">
+              <div class="step-title-row">
+                <h3>추후 정산</h3>
+                <span class="status status-upcoming">예정</span>
+              </div>
+              <p>Pay up bitches</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <p class="connection-status" id="connection-status" role="status" aria-live="polite"></p>
+
+      <footer class="page-footer">
+        <span>WINTER RUN ’26 <span aria-hidden="true">/</span> CREW OF 9</span>
+        <a href="expenses.html">정산 현황 확인 →</a>
+      </footer>
+    </main>
+  </body>
+</html>

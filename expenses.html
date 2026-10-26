@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171b19">
+    <title>연말여행</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="supabase-client.js" defer></script>
+    <script src="expenses.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="연말여행 홈">
+        <span class="brand-mark" aria-hidden="true">//</span>
+        <span>메인</span>
+      </a>
+      <nav class="main-nav" aria-label="주요 메뉴">
+        <a class="nav-link" href="index.html">여행 계획</a>
+        <a class="nav-link is-active" href="expenses.html">지출 정산</a>
+      </nav>
+    </header>
+
+    <main class="page-shell expense-shell">
+      <a class="back-link" href="index.html">← 여행 계획으로</a>
+      <section class="expense-hero">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> EXPENSE LOG</p>
+        <h1>돈<br><span>내</span></h1>
+        <p>결제자와 금액을 입력하세요. 공개 사이트 방문자는 누구나 내역을 읽고 수정할 수 있습니다.</p>
+      </section>
+
+      <p class="connection-status" id="connection-status" role="status" aria-live="polite"></p>
+      <section class="expense-summary" aria-label="정산 요약">
+        <div class="summary-cell">
+          <span>총 지출</span>
+          <strong id="total-amount">0</strong>
+          <small>입력한 지출 합계</small>
+        </div>
+        <div class="summary-cell">
+          <span>인원</span>
+          <label class="participant-field">
+            <input id="participant-count" type="number" min="1" step="1" value="9" inputmode="numeric" aria-label="정산 인원">
+            <small>명</small>
+          </label>
+          <small>나눠서 계산할 인원</small>
+        </div>
+        <div class="summary-cell summary-share">
+          <span>1인당 예상 금액</span>
+          <strong id="per-person-amount">0</strong>
+          <small>총 지출 ÷ 인원</small>
+        </div>
+      </section>
+
+      <section class="expense-layout">
+        <form class="expense-form" id="expense-form">
+          <div class="form-heading">
+            <p class="eyebrow">NEW ENTRY</p>
+            <h2>지출 기록</h2>
+          </div>
+          <label class="form-field">
+            <span>지출 항목</span>
+            <input id="expense-description" type="text" maxlength="80" placeholder="예: 장보기, 저녁 식사" required>
+          </label>
+          <div class="form-row">
+            <label class="form-field">
+              <span>결제자</span>
+              <input id="expense-payer" type="text" maxlength="40" placeholder="이름" required>
+            </label>
+            <label class="form-field">
+              <span>결제 금액</span>
+              <input id="expense-amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required>
+            </label>
+          </div>
+          <button class="button button-primary" type="submit">지출 저장 <span aria-hidden="true">＋</span></button>
+          <p class="form-note">공개 사이트입니다. 방문자는 누구나 내역을 읽고 수정할 수 있습니다.</p>
+        </form>
+
+        <section class="expense-list-panel" aria-labelledby="list-title">
+          <div class="list-heading">
+            <div>
+              <p class="eyebrow">SHARED LEDGER</p>
+              <h2 id="list-title">공동 지출 <span class="item-count" id="expense-count">0</span></h2>
+            </div>
+          </div>
+          <p class="list-feedback" id="list-feedback" aria-live="polite"></p>
+          <ul class="expense-list" id="expense-list"></ul>
+          <div class="empty-state" id="empty-state">
+            <span class="empty-icon" aria-hidden="true">＋</span>
+            <strong>아직 기록한 지출이 없어요.</strong>
+            <span>첫 번째 지출을 추가해 보세요.</span>
+          </div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
