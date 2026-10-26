@@ -145,7 +145,9 @@ async function loadNotes() {
   }
 
   notes = data;
-  noteFeedback.textContent = '';
+  if (noteFeedback.textContent.startsWith('메모를 불러오지 못했어요:')) {
+    noteFeedback.textContent = '';
+  }
   renderNotes();
   return true;
 }
@@ -178,7 +180,7 @@ async function saveNote(id, title, content, button) {
   }
 
   editingNoteId = null;
-  await loadNotes();
+  if (await loadNotes()) noteFeedback.textContent = '수정 내용을 DB에 저장했어요.';
 }
 
 async function removeNote(note, button) {
@@ -206,7 +208,7 @@ async function removeNote(note, button) {
   }
 
   if (editingNoteId === note.id) editingNoteId = null;
-  await loadNotes();
+  if (await loadNotes()) noteFeedback.textContent = '메모를 DB에서 삭제했어요.';
 }
 
 async function initializeNotes() {
@@ -257,22 +259,26 @@ noteForm.addEventListener('submit', async (event) => {
   const submitButton = noteForm.querySelector('button[type="submit"]');
   submitButton.disabled = true;
   noteFeedback.textContent = '메모 저장 중...';
-  const { error } = await database.client
-    .from('trip_notes')
-    .insert({ title, content });
+  try {
+    const { data, error } = await database.client
+      .from('trip_notes')
+      .insert({ title, content })
+      .select('id')
+      .single();
 
-  if (error) {
-    noteFeedback.textContent = `메모를 저장하지 못했어요: ${error.message}`;
-    console.error('Could not create shared note.', error);
+    if (error) throw error;
+    if (!data?.id) throw new Error('Database did not confirm the saved note.');
+
+    noteForm.reset();
+    titleInput.focus();
+    const loaded = await loadNotes();
+    if (loaded) noteFeedback.textContent = '메모를 DB에 저장했어요.';
+  } catch (error) {
+    noteFeedback.textContent = `메모 저장을 확인하지 못했어요: ${error.message}`;
+    console.error('Could not confirm shared note save.', error);
+  } finally {
     submitButton.disabled = false;
-    return;
   }
-
-  noteForm.reset();
-  noteFeedback.textContent = '';
-  submitButton.disabled = false;
-  titleInput.focus();
-  await loadNotes();
 });
 
 initializeNotes();

@@ -10,10 +10,11 @@
     <script src="supabase-config.js" defer></script>
     <script src="supabase-client.js" defer></script>
     <script src="expenses.js" defer></script>
+    <script src="prank.js" defer></script>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="연말여행 홈">
+      <a class="brand" href="index.html" aria-label="연말여행" aria-haspopup="dialog" data-prank-trigger>
         <span class="brand-mark" aria-hidden="true">//</span>
         <span>연말여행</span>
       </a>
@@ -29,7 +30,7 @@
       <a class="back-link" href="index.html">← 여행 계획으로</a>
       <section class="expense-hero">
         <p class="eyebrow"><span class="eyebrow-dot"></span> EXPENSE LOG</p>
-        <h1>돈<br><span>내</span></h1>
+        <h1>돈 내</h1>
         <p>결제자와 금액을 입력하세요. 공개 사이트 방문자는 누구나 내역을 읽고 수정할 수 있습니다.</p>
       </section>
 
@@ -86,6 +87,21 @@
               <input id="expense-amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" required>
             </label>
           </div>
+          <fieldset class="participant-picker">
+            <legend>나눌 사람</legend>
+            <div class="participant-grid" id="participant-grid">
+              <button class="participant-option is-selected" type="button" data-person="법기" aria-pressed="true">법기</button>
+              <button class="participant-option is-selected" type="button" data-person="영훈" aria-pressed="true">영훈</button>
+              <button class="participant-option is-selected" type="button" data-person="진구" aria-pressed="true">진구</button>
+              <button class="participant-option is-selected" type="button" data-person="선형" aria-pressed="true">선형</button>
+              <button class="participant-option is-selected" type="button" data-person="강욱" aria-pressed="true">강욱</button>
+              <button class="participant-option is-selected" type="button" data-person="정우" aria-pressed="true">정우</button>
+              <button class="participant-option is-selected" type="button" data-person="재형" aria-pressed="true">재형</button>
+              <button class="participant-option is-selected" type="button" data-person="정준" aria-pressed="true">정준</button>
+              <button class="participant-option is-selected" type="button" data-person="준원" aria-pressed="true">준원</button>
+              <button class="participant-option participant-all is-selected" type="button" data-person="all" aria-pressed="true">모두</button>
+            </div>
+          </fieldset>
           <button class="button button-primary" type="submit">지출 저장 <span aria-hidden="true">＋</span></button>
           <p class="form-note">공개 사이트입니다. 방문자는 누구나 내역을 읽고 수정할 수 있습니다.</p>
         </form>
@@ -115,13 +131,13 @@
           </div>
           <span class="settlement-total" id="settlement-total">기록된 지출 기준</span>
         </div>
-        <p class="settlement-note">지출을 9명이 똑같이 나눈 뒤, 결제한 금액을 반영해 계산합니다.</p>
+        <p class="settlement-note">각 지출에서 선택한 사람끼리 금액을 똑같이 나누고, 결제액을 반영합니다.</p>
         <p class="settlement-warning" id="settlement-warning" role="status" hidden></p>
         <div class="settlement-people" id="settlement-people"></div>
       </section>
 
       <footer class="page-footer">
-        <span>WINTER RUN ’26 <span aria-hidden="true">/</span> CREW OF 9</span>
+        <span>연말여행</span>
         <a href="expenses.html">정산 현황 확인 →</a>
       </footer>
     </main>

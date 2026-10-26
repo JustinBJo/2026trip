@@ -14,8 +14,13 @@ create table if not exists public.trip_expenses (
   description text not null check (char_length(description) between 1 and 80),
   payer text not null check (char_length(payer) between 1 and 40),
   amount numeric(12, 2) not null check (amount > 0),
+  participants text[] not null default array['법기', '영훈', '진구', '선형', '강욱', '정우', '재형', '정준', '준원']::text[],
   created_at timestamptz not null default now()
 );
+
+alter table public.trip_expenses
+  add column if not exists participants text[] not null
+  default array['법기', '영훈', '진구', '선형', '강욱', '정우', '재형', '정준', '준원']::text[];
 
 create table if not exists public.trip_recommendations (
   id uuid primary key default gen_random_uuid(),

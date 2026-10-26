@@ -10,10 +10,11 @@
     <script src="supabase-config.js" defer></script>
     <script src="supabase-client.js" defer></script>
     <script src="notes.js" defer></script>
+    <script src="prank.js" defer></script>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="연말여행 홈">
+      <a class="brand" href="index.html" aria-label="연말여행" aria-haspopup="dialog" data-prank-trigger>
         <span class="brand-mark" aria-hidden="true">//</span>
         <span>연말여행</span>
       </a>
@@ -26,10 +27,10 @@
     </header>
 
     <main class="page-shell notes-shell">
-      <a class="back-link" href="index.html">← 작전 현황</a>
+      <a class="back-link" href="index.html">← 여행 계획으로</a>
       <section class="expense-hero">
-        <p class="eyebrow"><span class="eyebrow-dot"></span> CREW NOTES</p>
-        <h1>기타<br><span>메모</span></h1>
+        <p class="eyebrow"><span class="eyebrow-dot"></span> NOTES</p>
+        <h1>게이게시판</h1>
         <p>준비물, 약속, 아이디어 등 공유용</p>
       </section>
 
@@ -71,7 +72,7 @@
       </section>
 
       <footer class="page-footer">
-        <span>WINTER RUN ’26 <span aria-hidden="true">/</span> CREW OF 9</span>
+        <span>연말여행</span>
         <a href="expenses.html">정산 현황 확인 →</a>
       </footer>
     </main>

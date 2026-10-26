@@ -10,10 +10,11 @@
     <script src="supabase-config.js" defer></script>
     <script src="supabase-client.js" defer></script>
     <script src="app.js" defer></script>
+    <script src="prank.js" defer></script>
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html" aria-label="연말여행 홈">
+      <a class="brand" href="index.html" aria-label="연말여행" aria-haspopup="dialog" data-prank-trigger>
         <span class="brand-mark" aria-hidden="true">//</span>
         <span>연말여행</span>
       </a>
@@ -81,10 +82,10 @@
           <li class="timeline-item is-current">
             <span class="step-marker" aria-hidden="true">04</span>
             <div class="step-content">
-              <div class="step-title-row">
+              <span class="step-title-row">
                 <h3>여행 당일</h3>
                 <span class="status status-current">다음 단계</span>
-              </div>
+              </span>
               <p>XX데이</p>
             </div>
           </li>
@@ -104,9 +105,10 @@
       <p class="connection-status" id="connection-status" role="status" aria-live="polite"></p>
 
       <footer class="page-footer">
-        <span>WINTER RUN ’26 <span aria-hidden="true">/</span> CREW OF 9</span>
+        <span>연말여행</span>
         <a href="expenses.html">정산 현황 확인 →</a>
       </footer>
     </main>
+
   </body>
 </html>

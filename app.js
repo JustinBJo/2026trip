@@ -86,15 +86,17 @@ async function initializeTripSettings() {
   }
 }
 
-trainSupportInput.disabled = true;
-trainSupportInput.addEventListener('input', () => {
-  window.clearTimeout(saveTimer);
-  trainSaveStatus.textContent = '입력 중...';
-  saveTimer = window.setTimeout(saveTrainAmount, 500);
-});
-trainSupportInput.addEventListener('change', () => {
-  window.clearTimeout(saveTimer);
-  saveTrainAmount();
-});
+if (trainSupportInput instanceof HTMLInputElement && trainSaveStatus) {
+  trainSupportInput.disabled = true;
+  trainSupportInput.addEventListener('input', () => {
+    window.clearTimeout(saveTimer);
+    trainSaveStatus.textContent = '입력 중...';
+    saveTimer = window.setTimeout(saveTrainAmount, 500);
+  });
+  trainSupportInput.addEventListener('change', () => {
+    window.clearTimeout(saveTimer);
+    saveTrainAmount();
+  });
 
-initializeTripSettings();
+  initializeTripSettings();
+}
